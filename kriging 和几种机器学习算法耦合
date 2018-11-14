@@ -1,0 +1,22 @@
+from pykrige.rk import RegressionKriging
+from pykrige.compat import train_test_split
+from sklearn.svm import SVR
+from sklearn.linear_model import LinearRegression
+
+svr_model = SVR(C=50, cache_size=100, coef0=0.0, degree=3, epsilon=0.1, gamma=0.005,
+     max_iter=-1, shrinking=True, tol=0.001, verbose=False)
+rf_model = RandomForestRegressor(max_depth= 21, min_samples_leaf= 2, n_estimators=1100,\
+                                      oob_score=True, max_features=3)
+lr_model = LinearRegression(normalize=True, copy_X=True, fit_intercept=False)
+models = [svr_model, rf_model, lr_model]
+krg =  np.array(data[['lon','lat']])
+z = data['soc'].T
+krg.reshape(-1,2)
+k_train, k_test, z_train, z_test = train_test_split(krg, z, test_size=0.3, random_state=42)
+for m in models:
+    print('=' * 40)
+    print('regression model:', m.__class__.__name__)
+    m_rk = RegressionKriging(regression_model=m, n_closest_points=10)
+    m_rk.fit(X_train, k_train, z_train,)
+    print('Regression Score: ', m_rk.regression_model.score(X_test,z_test))
+    print('RK score: ', m_rk.score(X_test,k_test,z_test))
