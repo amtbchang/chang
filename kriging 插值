@@ -1,0 +1,21 @@
+from sklearn.metrics import r2_score
+from pykrige.ok import OrdinaryKriging
+krg =  np.array(data[['lon','lat']])
+z = data['soc'].T
+krg.reshape(-1,2)
+print(x.shape, y.shape)
+k_train, k_test, z_train, z_test = train_test_split(krg, z, test_size=0.3, random_state=1)
+
+# Generate a regular grid with 60° longitude and 30° latitude steps:
+
+# Create ordinary kriging object:
+st = ['linear', 'power', 'gaussian', 'spherical', 'exponential', 'hole-effect']
+for i in range(2,10):
+    OK = OrdinaryKriging(k_train[:,0], k_train[:,1], z_train, variogram_model='hole-effect', verbose=False,\
+                         enable_plotting=False, coordinates_type='geographic',nlags=i)
+# Execute on grid:
+    z1, ss1 = OK.execute('points', k_test[:,0],  k_test[:,1])
+
+# Print data at equator (last longitude index will show periodicity):
+    #print(z1)
+    print(i,r2_score(z_test,z1))
