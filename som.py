@@ -2,7 +2,7 @@
 """
 Created on Tue Jan  1 16:08:12 2019
 
-@author: ThinkPad
+@author:Naijie Chang
 """
 
 from minisom import MiniSom
