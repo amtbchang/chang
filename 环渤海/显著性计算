@@ -1,0 +1,36 @@
+import numpy as np
+import pandas as pd
+import seaborn as sns
+import matplotlib.pyplot as plt
+import scipy.stats as stats# t-test 
+
+ath_p = r'I:\环渤海\未来气象\analysis'
+
+#database
+dt_ac = pd.read_csv(path_p + '\\' + 'ac_85_ann.csv',engine='python')
+dt_cn = pd.read_csv(path_p + '\\' + 'cn_85_ann.csv',engine='python')
+dt_gf = pd.read_csv(path_p + '\\' + 'gf_85_ann.csv',engine='python')
+dt_gi = pd.read_csv(path_p + '\\' + 'gi_85_ann.csv',engine='python')
+dt_mp = pd.read_csv(path_p + '\\' + 'mp_85_ann.csv',engine='python')
+
+p_08_2100_pr = []
+p_08_2100_tmax = []
+p_08_2100_tmin = []
+##loop
+for i in range(76):
+    _, p_pr = stats.ttest_ind([dt_ac.pr_08[i],dt_cn.pr_08[i],dt_gf.pr_08[i],dt_gi.pr_08[i],dt_mp.pr_08[i]],
+                              [dt_ac.pr_2100[i],dt_cn.pr_2100[i],dt_gf.pr_2100[i],dt_gi.pr_2100[i],dt_mp.pr_2100[i]])
+    _, p_tmax = stats.ttest_ind([dt_ac.tmax_08[i],dt_cn.tmax_08[i],dt_gf.tmax_08[i],dt_gi.tmax_08[i],dt_mp.tmax_08[i]],
+                                [dt_ac.tmax_2100[i],dt_cn.tmax_2100[i],dt_gf.tmax_2100[i],dt_gi.tmax_2100[i],dt_mp.tmax_2100[i]])
+    _, p_tmin = stats.ttest_ind([dt_ac.tmin_08[i],dt_cn.tmin_08[i],dt_gf.tmin_08[i],dt_gi.tmin_08[i],dt_mp.tmin_08[i]],
+                                [dt_ac.tmin_2100[i],dt_cn.tmin_2100[i],dt_gf.tmin_2100[i],dt_gi.tmin_2100[i],dt_mp.tmin_2100[i]])
+    p_08_2100_pr.append(p_pr)
+    p_08_2100_tmax.append(p_tmax)
+    p_08_2100_tmin.append(p_tmin)
+##new database
+data_p = pd.DataFrame()
+data_p['id'] = dt_mp.id
+data_p['p_pr_85'] = p_08_2100_pr
+data_p['p_tmax_85'] = p_08_2100_tmax
+data_p['p_tmin_85'] = p_08_2100_tmin
+data_p.to_csv(r'I:\环渤海\未来气象\analysis\二次分析\p_08_2100_ann_85.csv',index=None)
