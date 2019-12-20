@@ -1,0 +1,26 @@
+import os
+import pandas as pd
+
+
+list_r = [i for i in os.listdir(r'I:\环渤海\未来气象\analysis\气象插值数据\斜率数据xls') if i.endswith('xls') ]
+name_r = ['pr_r_45','tmax_r_45','tmin_r_45','pr_r_85','tmax_r_85','tmin_r_85']
+dt=pd.read_excel(r'I:\环渤海\未来气象\analysis\气象插值数据\斜率数据xls\mp_85_tmin_r.xls')
+
+for i in range(6):
+    dt_1 = pd.read_excel(r'I:\环渤海\未来气象\analysis\气象插值数据\斜率数据xls\%s'%(list_r[i]),index_col=0)
+    dt_2 = pd.read_excel(r'I:\环渤海\未来气象\analysis\气象插值数据\斜率数据xls\%s'%(list_r[0+6]),index_col=0)
+    dt_3 = pd.read_excel(r'I:\环渤海\未来气象\analysis\气象插值数据\斜率数据xls\%s'%(list_r[0+12]),index_col=0)
+    dt_4 = pd.read_excel(r'I:\环渤海\未来气象\analysis\气象插值数据\斜率数据xls\%s'%(list_r[0+18]),index_col=0)
+    dt_5 = pd.read_excel(r'I:\环渤海\未来气象\analysis\气象插值数据\斜率数据xls\%s'%(list_r[0+24]),index_col=0)  
+    a = np.vstack([np.array(dt_1[dt_5.columns[-12:]]).reshape(-1,1),np.array(dt_2[dt_5.columns[-12:]]).reshape(-1,1),
+                   np.array(dt_3[dt_3.columns[-12:]]).reshape(-1,1),np.array(dt_4[dt_4.columns[-12:]]).reshape(-1,1),
+                  np.array(dt_5[dt_5.columns[-12:]]).reshape(-1,1)])
+    a = a.reshape(5,-1)
+    b= np.mean(a,axis=0)
+    b = b.reshape(-1,12)
+    new_dt = pd.DataFrame(b,columns=['r'+str(i+1) for i in range(12)])
+    new_dt['Climate'] = dt_1.index
+    new_dt['lon'] = np.array(dt_1.lon)
+    new_dt['lat'] = np.array(dt_1.lat)
+    new_dt['Polygon'] = np.array(dt_1.Polygon)
+    new_dt.to_excel(r'I:\环渤海\未来气象\analysis\气象插值数据\斜率数据xls\整合\%s.xls'%name_r[i],)
